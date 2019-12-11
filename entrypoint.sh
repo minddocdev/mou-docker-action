@@ -40,7 +40,7 @@ function main() {
 
   pushImage
   echo ::set-output name=tag::"${GITHUB_SHA}"
-  echo ::set-output name=tag::"${BRANCH}"
+  echo ::set-output name=branch-tag::"${BRANCH}"
 
   docker logout
 }
