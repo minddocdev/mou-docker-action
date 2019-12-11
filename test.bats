@@ -31,9 +31,9 @@ teardown() {
 ::set-output name=branch-tag::master"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -t my/repository:12169ed809255604e557a82617264e9c373faca7 .
-/usr/local/bin/docker tag my/repository:12169ed809255604e557a82617264e9c373faca7 my/repository:master
+/usr/local/bin/docker build -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:master .
 /usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
+/usr/local/bin/docker push my/repository:master
 /usr/local/bin/docker logout"
 }
 
@@ -47,9 +47,9 @@ teardown() {
 ::set-output name=branch-tag::myBranch-withDash"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -t my/repository:12169ed809255604e557a82617264e9c373faca7 .
-/usr/local/bin/docker tag my/repository:12169ed809255604e557a82617264e9c373faca7 my/repository:myBranch-withDash
+/usr/local/bin/docker build -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:myBranch-withDash .
 /usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
+/usr/local/bin/docker push my/repository:myBranch-withDash
 /usr/local/bin/docker logout"
 }
 
@@ -63,9 +63,9 @@ teardown() {
 ::set-output name=branch-tag::master"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -f MyDockerFileName -t my/repository:12169ed809255604e557a82617264e9c373faca7 .
-/usr/local/bin/docker tag my/repository:12169ed809255604e557a82617264e9c373faca7 my/repository:master
+/usr/local/bin/docker build -f MyDockerFileName -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:master .
 /usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
+/usr/local/bin/docker push my/repository:master
 /usr/local/bin/docker logout"
 }
 
@@ -75,9 +75,9 @@ teardown() {
   run /entrypoint.sh
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin my.Registry.io
-/usr/local/bin/docker build -t my.Registry.io/my/repository:12169ed809255604e557a82617264e9c373faca7 .
-/usr/local/bin/docker tag my.Registry.io/my/repository:12169ed809255604e557a82617264e9c373faca7 my.Registry.io/my/repository:master
+/usr/local/bin/docker build -t my.Registry.io/my/repository:12169ed809255604e557a82617264e9c373faca7 -t my.Registry.io/my/repository:master .
 /usr/local/bin/docker push my.Registry.io/my/repository:12169ed809255604e557a82617264e9c373faca7
+/usr/local/bin/docker push my.Registry.io/my/repository:master
 /usr/local/bin/docker logout"
 }
 
@@ -88,9 +88,9 @@ teardown() {
   run /entrypoint.sh
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin my.Registry.io
-/usr/local/bin/docker build -t my.Registry.io/my/repository:12169ed809255604e557a82617264e9c373faca7 .
-/usr/local/bin/docker tag my.Registry.io/my/repository:12169ed809255604e557a82617264e9c373faca7 my.Registry.io/my/repository:master
+/usr/local/bin/docker build -t my.Registry.io/my/repository:12169ed809255604e557a82617264e9c373faca7 -t my.Registry.io/my/repository:master .
 /usr/local/bin/docker push my.Registry.io/my/repository:12169ed809255604e557a82617264e9c373faca7
+/usr/local/bin/docker push my.Registry.io/my/repository:master
 /usr/local/bin/docker logout"
 }
 
@@ -101,9 +101,9 @@ teardown() {
   run /entrypoint.sh
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin https://my.Registry.io
-/usr/local/bin/docker build -t my.Registry.io/my/repository:12169ed809255604e557a82617264e9c373faca7 .
-/usr/local/bin/docker tag my.Registry.io/my/repository:12169ed809255604e557a82617264e9c373faca7 my.Registry.io/my/repository:master
+/usr/local/bin/docker build -t my.Registry.io/my/repository:12169ed809255604e557a82617264e9c373faca7 -t my.Registry.io/my/repository:master .
 /usr/local/bin/docker push my.Registry.io/my/repository:12169ed809255604e557a82617264e9c373faca7
+/usr/local/bin/docker push my.Registry.io/my/repository:master
 /usr/local/bin/docker logout"
 }
 
@@ -113,10 +113,10 @@ teardown() {
   run /entrypoint.sh
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker pull my/repository:12169ed809255604e557a82617264e9c373faca7
-/usr/local/bin/docker build --cache-from my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:12169ed809255604e557a82617264e9c373faca7 .
-/usr/local/bin/docker tag my/repository:12169ed809255604e557a82617264e9c373faca7 my/repository:master
+/usr/local/bin/docker pull my/repository:master
+/usr/local/bin/docker build --cache-from my/repository:master -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:master .
 /usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
+/usr/local/bin/docker push my/repository:master
 /usr/local/bin/docker logout"
 }
 
@@ -126,9 +126,9 @@ teardown() {
   run /entrypoint.sh
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -t my/repository:12169ed809255604e557a82617264e9c373faca7 .
-/usr/local/bin/docker tag my/repository:12169ed809255604e557a82617264e9c373faca7 my/repository:master
+/usr/local/bin/docker build -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:master .
 /usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
+/usr/local/bin/docker push my/repository:master
 /usr/local/bin/docker logout"
 }
 
@@ -144,9 +144,9 @@ teardown() {
 ::set-output name=branch-tag::master"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build --build-arg MY_FIRST --build-arg MY_SECOND -t my/repository:12169ed809255604e557a82617264e9c373faca7 .
-/usr/local/bin/docker tag my/repository:12169ed809255604e557a82617264e9c373faca7 my/repository:master
+/usr/local/bin/docker build --build-arg MY_FIRST --build-arg MY_SECOND -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:master .
 /usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
+/usr/local/bin/docker push my/repository:master
 /usr/local/bin/docker logout"
 }
 
@@ -161,9 +161,9 @@ teardown() {
 ::set-output name=branch-tag::master"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build --build-arg MY_ONLY -t my/repository:12169ed809255604e557a82617264e9c373faca7 .
-/usr/local/bin/docker tag my/repository:12169ed809255604e557a82617264e9c373faca7 my/repository:master
+/usr/local/bin/docker build --build-arg MY_ONLY -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:master .
 /usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
+/usr/local/bin/docker push my/repository:master
 /usr/local/bin/docker logout"
 }
 
@@ -215,9 +215,9 @@ teardown() {
   run /entrypoint.sh
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -t my/repository:12169ed809255604e557a82617264e9c373faca7 /myContextFolder
-/usr/local/bin/docker tag my/repository:12169ed809255604e557a82617264e9c373faca7 my/repository:master
+/usr/local/bin/docker build -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:master /myContextFolder
 /usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
+/usr/local/bin/docker push my/repository:master
 /usr/local/bin/docker logout"
 }
 

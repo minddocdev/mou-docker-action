@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-function main() {
+main() {
   echo "" # see https://github.com/actions/toolkit/issues/168
 
   sanitize "${INPUT_NAME}" "name"
@@ -13,14 +13,15 @@ function main() {
     INPUT_NAME="${REGISTRY_NO_PROTOCOL}/${INPUT_NAME}"
   fi
 
-  BRANCH=$(echo ${GITHUB_REF} | sed -e "s/refs\/heads\///g" | sed -e "s/\//-/g")
-  DOCKERNAME="${INPUT_NAME}:${GITHUB_SHA}"
+  BRANCH=$(echo "${GITHUB_REF}" | sed -e "s/refs\/heads\///g" | sed -e "s/\//-/g")
+  DOCKERNAME_BRANCH="${INPUT_NAME}:${BRANCH}"
+  DOCKERNAME_SHA="${INPUT_NAME}:${GITHUB_SHA}"
 
   if uses "${INPUT_WORKDIR}"; then
     changeWorkingDirectory
   fi
 
-  echo ${INPUT_PASSWORD} | docker login -u ${INPUT_USERNAME} --password-stdin ${INPUT_REGISTRY}
+  echo "${INPUT_PASSWORD}" | docker login -u ${INPUT_USERNAME} --password-stdin ${INPUT_REGISTRY}
 
   BUILDPARAMS=""
   CONTEXT="."
@@ -45,50 +46,50 @@ function main() {
   docker logout
 }
 
-function sanitize() {
+sanitize() {
   if [ -z "${1}" ]; then
     >&2 echo "Unable to find the ${2}. Did you set with.${2}?"
     exit 1
   fi
 }
 
-function isPartOfTheName() {
-  [ $(echo "${INPUT_NAME}" | sed -e "s/${1}//g") != "${INPUT_NAME}" ]
+isPartOfTheName() {
+  [ "$(echo "${INPUT_NAME}" | sed -e "s/${1}//g")" != "${INPUT_NAME}" ]
 }
 
-function changeWorkingDirectory() {
+changeWorkingDirectory() {
   cd "${INPUT_WORKDIR}"
 }
 
-function useCustomDockerfile() {
+useCustomDockerfile() {
   BUILDPARAMS="$BUILDPARAMS -f ${INPUT_DOCKERFILE}"
 }
 
-function addBuildArgs() {
+addBuildArgs() {
   for arg in $(echo "${INPUT_BUILDARGS}" | tr ',' '\n'); do
     BUILDPARAMS="$BUILDPARAMS --build-arg ${arg}"
     echo "::add-mask::${arg}"
   done
 }
 
-function useBuildCache() {
-  if docker pull ${DOCKERNAME} 2>/dev/null; then
-    BUILDPARAMS="$BUILDPARAMS --cache-from ${DOCKERNAME}"
+useBuildCache() {
+  if docker pull "${DOCKERNAME_BRANCH}" 2>/dev/null; then
+    BUILDPARAMS="$BUILDPARAMS --cache-from ${DOCKERNAME_BRANCH}"
   fi
 }
 
-function uses() {
-  [ ! -z "${1}" ]
+uses() {
+  [ -n "${1}" ]
 }
 
-function usesBoolean() {
-  [ ! -z "${1}" ] && [ "${1}" = "true" ]
+usesBoolean() {
+  [ -n "${1}" ] && [ "${1}" = "true" ]
 }
 
-function pushImage() {
-  docker build $BUILDPARAMS -t ${DOCKERNAME} ${CONTEXT}
-  docker tag ${DOCKERNAME} "${INPUT_NAME}:${BRANCH}"
-  docker push ${DOCKERNAME}
+pushImage() {
+  docker build $BUILDPARAMS -t "${DOCKERNAME_SHA}" -t "${DOCKERNAME_BRANCH}" "${CONTEXT}"
+  docker push "${DOCKERNAME_SHA}"
+  docker push "${DOCKERNAME_BRANCH}"
 }
 
 main
