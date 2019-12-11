@@ -8,14 +8,13 @@ setup(){
   ) > mockReturns
 
   export GITHUB_REF='refs/heads/master'
+  export GITHUB_SHA='12169ed809255604e557a82617264e9c373faca7'
   export INPUT_USERNAME='USERNAME'
   export INPUT_PASSWORD='PASSWORD'
   export INPUT_NAME='my/repository'
 }
 
 teardown() {
-  unset INPUT_TAG_NAMES
-  unset INPUT_SNAPSHOT
   unset INPUT_DOCKERFILE
   unset INPUT_REGISTRY
   unset INPUT_CACHE
@@ -24,31 +23,17 @@ teardown() {
   unset MOCK_ERROR_CONDITION
 }
 
-@test "it pushes master branch to latest" {
-  export GITHUB_REF='refs/heads/master'
-
-  run /entrypoint.sh
-
-  expectStdOut "
-::set-output name=tag::latest"
-
-  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -t my/repository:latest .
-/usr/local/bin/docker push my/repository:latest
-/usr/local/bin/docker logout"
-}
-
 @test "it pushes branch as name of the branch" {
-  export GITHUB_REF='refs/heads/myBranch'
-
   run /entrypoint.sh
 
   expectStdOut "
-::set-output name=tag::myBranch"
+::set-output name=tag::12169ed809255604e557a82617264e9c373faca7
+::set-output name=branch-tag::master"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -t my/repository:myBranch .
-/usr/local/bin/docker push my/repository:myBranch
+/usr/local/bin/docker build -t my/repository:12169ed809255604e557a82617264e9c373faca7 .
+/usr/local/bin/docker tag my/repository:12169ed809255604e557a82617264e9c373faca7 my/repository:master
+/usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
 /usr/local/bin/docker logout"
 }
 
@@ -58,197 +43,29 @@ teardown() {
   run /entrypoint.sh
 
   expectStdOut "
-::set-output name=tag::myBranch-withDash"
+::set-output name=tag::12169ed809255604e557a82617264e9c373faca7
+::set-output name=branch-tag::myBranch-withDash"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -t my/repository:myBranch-withDash .
-/usr/local/bin/docker push my/repository:myBranch-withDash
+/usr/local/bin/docker build -t my/repository:12169ed809255604e557a82617264e9c373faca7 .
+/usr/local/bin/docker tag my/repository:12169ed809255604e557a82617264e9c373faca7 my/repository:myBranch-withDash
+/usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
 /usr/local/bin/docker logout"
 }
 
-@test "it pushes tags to latest" {
-  export GITHUB_REF='refs/tags/myRelease'
-
-  run /entrypoint.sh
-
-  expectStdOut "
-::set-output name=tag::latest"
-
-  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -t my/repository:latest .
-/usr/local/bin/docker push my/repository:latest
-/usr/local/bin/docker logout"
-}
-
-@test "with tag names it pushes tags using the name" {
-  export GITHUB_REF='refs/tags/myRelease'
-  export INPUT_TAG_NAMES="true"
-
-  run /entrypoint.sh
-
-  expectStdOut "
-::set-output name=tag::myRelease"
-
-  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -t my/repository:myRelease .
-/usr/local/bin/docker push my/repository:myRelease
-/usr/local/bin/docker logout"
-}
-
-@test "with tag names set to false it doesn't push tags using the name" {
-  export GITHUB_REF='refs/tags/myRelease'
-  export INPUT_TAG_NAMES="false"
-
-  run /entrypoint.sh
-
-  expectStdOut "
-::set-output name=tag::latest"
-
-  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -t my/repository:latest .
-/usr/local/bin/docker push my/repository:latest
-/usr/local/bin/docker logout"
-}
-
-@test "it pushes specific Dockerfile to latest" {
+@test "it pushes specific Dockerfile to branch" {
   export INPUT_DOCKERFILE='MyDockerFileName'
 
   run /entrypoint.sh  export GITHUB_REF='refs/heads/master'
 
   expectStdOut "
-::set-output name=tag::latest"
+::set-output name=tag::12169ed809255604e557a82617264e9c373faca7
+::set-output name=branch-tag::master"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -f MyDockerFileName -t my/repository:latest .
-/usr/local/bin/docker push my/repository:latest
-/usr/local/bin/docker logout"
-}
-
-@test "it pushes a snapshot by sha and date in addition" {
-  export INPUT_SNAPSHOT='true'
-  export GITHUB_SHA='12169ed809255604e557a82617264e9c373faca7'
-
-  declare -A -p MOCK_RETURNS=(
-  ['/usr/local/bin/docker']=""
-  ['/usr/bin/date']="197001010101"
-  ) > mockReturns
-
-  run /entrypoint.sh
-
-  expectStdOut "
-::set-output name=snapshot-tag::19700101010112169e
-::set-output name=tag::latest"
-
-  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/bin/date +%Y%m%d%H%M%S
-/usr/local/bin/docker build -t my/repository:latest -t my/repository:19700101010112169e .
-/usr/local/bin/docker push my/repository:latest
-/usr/local/bin/docker push my/repository:19700101010112169e
-/usr/local/bin/docker logout"
-}
-
-@test "it does not push a snapshot by sha and date in addition when turned off" {
-  export INPUT_SNAPSHOT='false'
-  export GITHUB_SHA='12169ed809255604e557a82617264e9c373faca7'
-
-  declare -A -p MOCK_RETURNS=(
-  ['/usr/local/bin/docker']=""
-  ['/usr/bin/date']="197001010101"
-  ) > mockReturns
-
-  run /entrypoint.sh
-
-  expectStdOut "
-::set-output name=tag::latest"
-
-  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -t my/repository:latest .
-/usr/local/bin/docker push my/repository:latest
-/usr/local/bin/docker logout"
-}
-
-@test "it caches image from former build and uses it for snapshot" {
-  export GITHUB_SHA='12169ed809255604e557a82617264e9c373faca7'
-  export INPUT_SNAPSHOT='true'
-  export INPUT_CACHE='true'
-
-  declare -A -p MOCK_RETURNS=(
-  ['/usr/local/bin/docker']=""
-  ['/usr/bin/date']="197001010101"
-  ) > mockReturns
-
-  run /entrypoint.sh
-
-  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker pull my/repository:latest
-/usr/bin/date +%Y%m%d%H%M%S
-/usr/local/bin/docker build --cache-from my/repository:latest -t my/repository:latest -t my/repository:19700101010112169e .
-/usr/local/bin/docker push my/repository:latest
-/usr/local/bin/docker push my/repository:19700101010112169e
-/usr/local/bin/docker logout"
-}
-
-@test "it does not use the cache for building when pulling the former image failed" {
-  export GITHUB_SHA='12169ed809255604e557a82617264e9c373faca7'
-  export MOCK_DATE='197001010101'
-  export INPUT_SNAPSHOT='true'
-  export INPUT_CACHE='true'
-
-  declare -A -p MOCK_RETURNS=(
-  ['/usr/local/bin/docker']="_pull my/repository:latest" # errors when pulled
-  ['/usr/bin/date']="197001010101"
-  ) > mockReturns
-
-  run /entrypoint.sh
-
-  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker pull my/repository:latest
-/usr/bin/date +%Y%m%d%H%M%S
-/usr/local/bin/docker build -t my/repository:latest -t my/repository:19700101010112169e .
-/usr/local/bin/docker push my/repository:latest
-/usr/local/bin/docker push my/repository:19700101010112169e
-/usr/local/bin/docker logout"
-}
-
-@test "it pushes branch by sha and date with specific Dockerfile" {
-  export GITHUB_SHA='12169ed809255604e557a82617264e9c373faca7'
-  export INPUT_SNAPSHOT='true'
-  export INPUT_DOCKERFILE='MyDockerFileName'
-
-  declare -A -p MOCK_RETURNS=(
-  ['/usr/local/bin/docker']=""
-  ['/usr/bin/date']="197001010101"
-  ) > mockReturns
-
-  run /entrypoint.sh
-
-  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/bin/date +%Y%m%d%H%M%S
-/usr/local/bin/docker build -f MyDockerFileName -t my/repository:latest -t my/repository:19700101010112169e .
-/usr/local/bin/docker push my/repository:latest
-/usr/local/bin/docker push my/repository:19700101010112169e
-/usr/local/bin/docker logout"
-}
-
-@test "it caches image from former build and uses it for snapshot with specific Dockerfile" {
-  export GITHUB_SHA='12169ed809255604e557a82617264e9c373faca7'
-  export INPUT_SNAPSHOT='true'
-  export INPUT_CACHE='true'
-  export INPUT_DOCKERFILE='MyDockerFileName'
-
-  declare -A -p MOCK_RETURNS=(
-  ['/usr/local/bin/docker']=""
-  ['/usr/bin/date']="197001010101"
-  ) > mockReturns
-
-  run /entrypoint.sh
-
-  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker pull my/repository:latest
-/usr/bin/date +%Y%m%d%H%M%S
-/usr/local/bin/docker build -f MyDockerFileName --cache-from my/repository:latest -t my/repository:latest -t my/repository:19700101010112169e .
-/usr/local/bin/docker push my/repository:latest
-/usr/local/bin/docker push my/repository:19700101010112169e
+/usr/local/bin/docker build -f MyDockerFileName -t my/repository:12169ed809255604e557a82617264e9c373faca7 .
+/usr/local/bin/docker tag my/repository:12169ed809255604e557a82617264e9c373faca7 my/repository:master
+/usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
 /usr/local/bin/docker logout"
 }
 
@@ -258,8 +75,9 @@ teardown() {
   run /entrypoint.sh
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin my.Registry.io
-/usr/local/bin/docker build -t my.Registry.io/my/repository:latest .
-/usr/local/bin/docker push my.Registry.io/my/repository:latest
+/usr/local/bin/docker build -t my.Registry.io/my/repository:12169ed809255604e557a82617264e9c373faca7 .
+/usr/local/bin/docker tag my.Registry.io/my/repository:12169ed809255604e557a82617264e9c373faca7 my.Registry.io/my/repository:master
+/usr/local/bin/docker push my.Registry.io/my/repository:12169ed809255604e557a82617264e9c373faca7
 /usr/local/bin/docker logout"
 }
 
@@ -270,8 +88,9 @@ teardown() {
   run /entrypoint.sh
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin my.Registry.io
-/usr/local/bin/docker build -t my.Registry.io/my/repository:latest .
-/usr/local/bin/docker push my.Registry.io/my/repository:latest
+/usr/local/bin/docker build -t my.Registry.io/my/repository:12169ed809255604e557a82617264e9c373faca7 .
+/usr/local/bin/docker tag my.Registry.io/my/repository:12169ed809255604e557a82617264e9c373faca7 my.Registry.io/my/repository:master
+/usr/local/bin/docker push my.Registry.io/my/repository:12169ed809255604e557a82617264e9c373faca7
 /usr/local/bin/docker logout"
 }
 
@@ -282,8 +101,9 @@ teardown() {
   run /entrypoint.sh
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin https://my.Registry.io
-/usr/local/bin/docker build -t my.Registry.io/my/repository:latest .
-/usr/local/bin/docker push my.Registry.io/my/repository:latest
+/usr/local/bin/docker build -t my.Registry.io/my/repository:12169ed809255604e557a82617264e9c373faca7 .
+/usr/local/bin/docker tag my.Registry.io/my/repository:12169ed809255604e557a82617264e9c373faca7 my.Registry.io/my/repository:master
+/usr/local/bin/docker push my.Registry.io/my/repository:12169ed809255604e557a82617264e9c373faca7
 /usr/local/bin/docker logout"
 }
 
@@ -293,9 +113,10 @@ teardown() {
   run /entrypoint.sh
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker pull my/repository:latest
-/usr/local/bin/docker build --cache-from my/repository:latest -t my/repository:latest .
-/usr/local/bin/docker push my/repository:latest
+/usr/local/bin/docker pull my/repository:12169ed809255604e557a82617264e9c373faca7
+/usr/local/bin/docker build --cache-from my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:12169ed809255604e557a82617264e9c373faca7 .
+/usr/local/bin/docker tag my/repository:12169ed809255604e557a82617264e9c373faca7 my/repository:master
+/usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
 /usr/local/bin/docker logout"
 }
 
@@ -305,38 +126,9 @@ teardown() {
   run /entrypoint.sh
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -t my/repository:latest .
-/usr/local/bin/docker push my/repository:latest
-/usr/local/bin/docker logout"
-}
-
-@test "it pushes pull requests when configured" {
-  export GITHUB_REF='refs/pull/24/merge'
-  export GITHUB_SHA='12169ed809255604e557a82617264e9c373faca7'
-  export INPUT_PULL_REQUESTS='true'
-
-  run /entrypoint.sh
-
-  expectStdOut "
-::set-output name=tag::12169ed809255604e557a82617264e9c373faca7"
-
-  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
 /usr/local/bin/docker build -t my/repository:12169ed809255604e557a82617264e9c373faca7 .
+/usr/local/bin/docker tag my/repository:12169ed809255604e557a82617264e9c373faca7 my/repository:master
 /usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
-/usr/local/bin/docker logout"
-}
-
-@test "it pushes to the tag if configured in the name" {
-  export INPUT_NAME='my/repository:custom-tag'
-
-  run /entrypoint.sh
-
-  expectStdOut "
-::set-output name=tag::custom-tag"
-
-  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -t my/repository:custom-tag .
-/usr/local/bin/docker push my/repository:custom-tag
 /usr/local/bin/docker logout"
 }
 
@@ -348,11 +140,13 @@ teardown() {
   expectStdOut "
 ::add-mask::MY_FIRST
 ::add-mask::MY_SECOND
-::set-output name=tag::latest"
+::set-output name=tag::12169ed809255604e557a82617264e9c373faca7
+::set-output name=branch-tag::master"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build --build-arg MY_FIRST --build-arg MY_SECOND -t my/repository:latest .
-/usr/local/bin/docker push my/repository:latest
+/usr/local/bin/docker build --build-arg MY_FIRST --build-arg MY_SECOND -t my/repository:12169ed809255604e557a82617264e9c373faca7 .
+/usr/local/bin/docker tag my/repository:12169ed809255604e557a82617264e9c373faca7 my/repository:master
+/usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
 /usr/local/bin/docker logout"
 }
 
@@ -363,11 +157,13 @@ teardown() {
 
   expectStdOut "
 ::add-mask::MY_ONLY
-::set-output name=tag::latest"
+::set-output name=tag::12169ed809255604e557a82617264e9c373faca7
+::set-output name=branch-tag::master"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build --build-arg MY_ONLY -t my/repository:latest .
-/usr/local/bin/docker push my/repository:latest
+/usr/local/bin/docker build --build-arg MY_ONLY -t my/repository:12169ed809255604e557a82617264e9c373faca7 .
+/usr/local/bin/docker tag my/repository:12169ed809255604e557a82617264e9c373faca7 my/repository:master
+/usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
 /usr/local/bin/docker logout"
 }
 
@@ -419,29 +215,9 @@ teardown() {
   run /entrypoint.sh
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -t my/repository:latest /myContextFolder
-/usr/local/bin/docker push my/repository:latest
-/usr/local/bin/docker logout"
-}
-
-@test "it can set a custom context when building snapshot" {
-  export GITHUB_REF='refs/heads/master'
-  export INPUT_CONTEXT='/myContextFolder'
-  export GITHUB_SHA='12169ed809255604e557a82617264e9c373faca7'
-  export INPUT_SNAPSHOT='true'
-
-  declare -A -p MOCK_RETURNS=(
-  ['/usr/local/bin/docker']=""
-  ['/usr/bin/date']="197001010101"
-  ) > mockReturns
-
-  run /entrypoint.sh
-
-  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/bin/date +%Y%m%d%H%M%S
-/usr/local/bin/docker build -t my/repository:latest -t my/repository:19700101010112169e /myContextFolder
-/usr/local/bin/docker push my/repository:latest
-/usr/local/bin/docker push my/repository:19700101010112169e
+/usr/local/bin/docker build -t my/repository:12169ed809255604e557a82617264e9c373faca7 /myContextFolder
+/usr/local/bin/docker tag my/repository:12169ed809255604e557a82617264e9c373faca7 my/repository:master
+/usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
 /usr/local/bin/docker logout"
 }
 
