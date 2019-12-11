@@ -17,9 +17,6 @@ inputs:
   registry:
     description: 'Use registry for pushing to a custom registry'
     required: false
-  snapshot:
-    description: 'Use snapshot to push an additional image'
-    required: false
   dockerfile:
     description: 'Use dockerfile when you would like to explicitly build a Dockerfile'
     required: false
@@ -31,9 +28,6 @@ inputs:
     required: false
   cache:
     description: 'Use cache when you have big images, that you would only like to build partially'
-    required: false
-  tag_names:
-    description: 'Use tag_names when you want to push tags/release by their git name'
     required: false
 outputs:
   tag:
