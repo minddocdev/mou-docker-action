@@ -13,7 +13,12 @@ main() {
     INPUT_NAME="${REGISTRY_NO_PROTOCOL}/${INPUT_NAME}"
   fi
 
-  BRANCH=$(echo "${GITHUB_REF}" | sed -e "s/refs\/heads\///g" | sed -e "s/\//-/g")
+  BRANCH="${GITHUB_REF}"
+  if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
+    BRANCH="${GITHUB_HEAD_REF}"
+  fi
+  BRANCH=$(echo "${BRANCH}" | sed -e "s/refs\/heads\///g" | sed -e "s/\//-/g")
+
   DOCKERNAME_BRANCH="${INPUT_NAME}:${BRANCH}"
   DOCKERNAME_SHA="${INPUT_NAME}:${GITHUB_SHA}"
 
