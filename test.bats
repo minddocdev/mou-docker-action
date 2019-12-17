@@ -8,7 +8,9 @@ setup(){
   ) > mockReturns
 
   export GITHUB_REF='refs/heads/master'
+  export GITHUB_HEAD_REF='refs/heads/my-branch'
   export GITHUB_SHA='12169ed809255604e557a82617264e9c373faca7'
+  export GITHUB_EVENT_NAME='push'
   export INPUT_USERNAME='USERNAME'
   export INPUT_PASSWORD='PASSWORD'
   export INPUT_NAME='my/repository'
@@ -232,4 +234,20 @@ function expectMockCalled() {
   echo "Expected: |$1|
   Got: |$mockCalledWith|"
   [ "$mockCalledWith" = "$1" ]
+}
+
+@test "it uses the head ref as name of the branch on pull request" {
+  GITHUB_EVENT_NAME='pull_request'
+
+  run /entrypoint.sh
+
+  expectStdOut "
+::set-output name=tag::12169ed809255604e557a82617264e9c373faca7
+::set-output name=branch-tag::my-branch"
+
+  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
+/usr/local/bin/docker build -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:my-branch .
+/usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
+/usr/local/bin/docker push my/repository:my-branch
+/usr/local/bin/docker logout"
 }
