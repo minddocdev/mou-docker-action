@@ -1,5 +1,5 @@
-name: 'Publish Docker'
-author: 'Lars Gohr'
+name: 'docker-publish-action'
+author: 'MindDoc Health GmbH'
 branding:
   icon: 'anchor'
   color: 'blue'
