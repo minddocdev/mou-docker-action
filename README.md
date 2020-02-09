@@ -6,6 +6,9 @@ This Action for [Docker](https://www.docker.com/) uses the Git branch or tag as
 the [Docker tag](https://docs.docker.com/engine/reference/commandline/tag/)
 for building and pushing the container.
 
+Forked from [elgohr/Publish-Docker-Github-Action](https://github.com/elgohr/Publish-Docker-Github-Action)
+and edited to handle git branches and tags by default.
+
 ## Usage
 
 ### Example pipeline
