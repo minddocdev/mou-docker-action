@@ -2,7 +2,7 @@
 
 [![Actions Status](https://github.com/minddocdev/docker-publish-action/workflows/test/badge.svg)](https://github.com/minddocdev/docker-publish-action/actions)
 
-This Action for [Docker](https://www.docker.com/) uses the Git branch as
+This Action for [Docker](https://www.docker.com/) uses the Git branch or tag as
 the [Docker tag](https://docs.docker.com/engine/reference/commandline/tag/)
 for building and pushing the container.
 
@@ -31,13 +31,6 @@ jobs:
 `name` is the name of the image you would like to push
 `username` the login username for the registry
 `password` the login password for the registry
-
-If you would like to publish the image to other registries, these actions might be helpful
-
-| Registry                                             | Action                                          |
-|------------------------------------------------------|-------------------------------------------------|
-| Amazon Webservices Elastic Container Registry (ECR)  | <https://github.com/elgohr/ecr-login-action>    |
-| Google Cloud Container Registry                      | <https://github.com/elgohr/gcloud-login-action> |
 
 ## Outputs
 
