@@ -1,0 +1,24 @@
+name: "yaml"
+
+on:
+  push:
+    branches:
+      - "master"
+    paths:
+      - "**.yaml"
+      - "**.yml"
+  pull_request:
+    paths:
+      - "**.yaml"
+      - "**.yml"
+
+jobs:
+  yaml_lint:
+    name: yaml lint
+    runs-on: ubuntu-latest
+    container: giantswarm/yamllint:latest
+    steps:
+      - name: Checkout git repository
+        uses: actions/checkout@v1.2.0
+      - name: Lint yaml files
+        run: yamllint -c .yamllint.yaml .

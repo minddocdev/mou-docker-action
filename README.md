@@ -1,13 +1,17 @@
-# Publishes docker containers
-[![Actions Status](https://github.com/elgohr/Publish-Docker-Github-Action/workflows/Test/badge.svg)](https://github.com/elgohr/Publish-Docker-Github-Action/actions)
-[![Actions Status](https://github.com/elgohr/Publish-Docker-Github-Action/workflows/Integration%20Test/badge.svg)](https://github.com/elgohr/Publish-Docker-Github-Action/actions)
-[![Actions Status](https://github.com/elgohr/Publish-Docker-Github-Action/workflows/Integration%20Test%20Github/badge.svg)](https://github.com/elgohr/Publish-Docker-Github-Action/actions)
+# Docker publish action
 
-This Action for [Docker](https://www.docker.com/) uses the Git branch as the [Docker tag](https://docs.docker.com/engine/reference/commandline/tag/) for building and pushing the container.
+[![Actions Status](https://github.com/minddocdev/docker-publish-action/workflows/Test/badge.svg)](https://github.com/minddocdev/docker-publish-action/actions)
+[![Actions Status](https://github.com/minddocdev/docker-publish-action/workflows/Integration%20Test/badge.svg)](https://github.com/minddocdev/docker-publish-action/actions)
+[![Actions Status](https://github.com/minddocdev/docker-publish-action/workflows/Integration%20Test%20Github/badge.svg)](https://github.com/minddocdev/docker-publish-action/actions)
+
+This Action for [Docker](https://www.docker.com/) uses the Git branch as
+the [Docker tag](https://docs.docker.com/engine/reference/commandline/tag/)
+for building and pushing the container.
 
 ## Usage
 
-## Example pipeline
+### Example pipeline
+
 ```yaml
 name: Publish Docker
 on: [push]
@@ -26,24 +30,25 @@ jobs:
 
 ## Mandatory Arguments
 
-`name` is the name of the image you would like to push  
-`username` the login username for the registry  
-`password` the login password for the registry  
+`name` is the name of the image you would like to push
+`username` the login username for the registry
+`password` the login password for the registry
 
-If you would like to publish the image to other registries, these actions might be helpful  
+If you would like to publish the image to other registries, these actions might be helpful
 
-| Registry                                             | Action                                        |
-|------------------------------------------------------|-----------------------------------------------|
-| Amazon Webservices Elastic Container Registry (ECR)  | https://github.com/elgohr/ecr-login-action    |
-| Google Cloud Container Registry                      | https://github.com/elgohr/gcloud-login-action |
+| Registry                                             | Action                                          |
+|------------------------------------------------------|-------------------------------------------------|
+| Amazon Webservices Elastic Container Registry (ECR)  | <https://github.com/elgohr/ecr-login-action>    |
+| Google Cloud Container Registry                      | <https://github.com/elgohr/gcloud-login-action> |
 
 ## Outputs
 
-`tag` is the tag, which was pushed  
+`tag` is the tag, which was pushed
 
 ## Optional Arguments
 
 ### registry
+
 Use `registry` for pushing to a custom registry.
 > NOTE: GitHub's Docker registry uses a different path format to Docker Hub, as shown below. See [Configuring Docker for use with GitHub Package Registry](https://help.github.com/en/github/managing-packages-with-github-package-registry/configuring-docker-for-use-with-github-package-registry#publishing-a-package) for more information.
 
@@ -56,8 +61,9 @@ with:
 ```
 
 ### dockerfile
-Use `dockerfile` when you would like to explicitly build a Dockerfile.  
-This might be useful when you have multiple DockerImages.  
+
+Use `dockerfile` when you would like to explicitly build a Dockerfile.
+This might be useful when you have multiple DockerImages.
 
 ```yaml
 with:
@@ -68,6 +74,7 @@ with:
 ```
 
 ### workdir
+
 Use `workdir` when you would like to change the directory for building.
 
 ```yaml
@@ -79,6 +86,7 @@ with:
 ```
 
 ### context
+
 Use `context` when you would like to change the Docker build context.
 
 ```yaml
@@ -90,8 +98,9 @@ with:
 ```
 
 ### buildargs
-Use `buildargs` when you want to pass a list of environment variables as [build-args](https://docs.docker.com/engine/reference/commandline/build/#set-build-time-variables---build-arg). Identifiers are separated by comma.   
-All `buildargs` will be masked, so that they don't appear in the logs.  
+
+Use `buildargs` when you want to pass a list of environment variables as [build-args](https://docs.docker.com/engine/reference/commandline/build/#set-build-time-variables---build-arg). Identifiers are separated by comma.
+All `buildargs` will be masked, so that they don't appear in the logs.
 
 ```yaml
 - name: Publish to Registry
@@ -107,7 +116,8 @@ All `buildargs` will be masked, so that they don't appear in the logs.
 ```
 
 ### cache
-Use `cache` when you have big images, that you would only like to build partially (changed layers).  
+
+Use `cache` when you have big images, that you would only like to build partially (changed layers).
 > CAUTION: Docker builds will cache non-repoducable commands, such as installing packages. If you use this option, your packages will never update. To avoid this, run this action on a schedule with caching **disabled** to rebuild the cache periodically.
 
 ```yaml
@@ -130,4 +140,12 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         cache: ${{ github.event_name != 'schedule' }}
+```
+
+## Development
+
+Run the tests with
+
+```sh
+docker build .
 ```

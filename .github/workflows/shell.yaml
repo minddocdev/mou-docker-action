@@ -1,0 +1,26 @@
+name: 'shell'
+
+on:
+  push:
+    branches:
+    - 'master'
+    paths:
+    - '**.sh'
+  pull_request:
+    paths:
+    - '**.sh'
+
+jobs:
+  shell_check:
+    name: shell check
+    runs-on: ubuntu-latest
+    container: koalaman/shellcheck-alpine:latest
+    steps:
+    - name: Checkout git repository
+      uses: actions/checkout@v1.2.0
+    - name: Check shell scripts
+      run: '
+        find . -type f \( -name "*.sh" \) -print |
+        while IFS="" read -r file;
+        do shellcheck "$file"; done;
+      '
