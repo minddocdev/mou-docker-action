@@ -50,7 +50,9 @@ If you would like to publish the image to other registries, these actions might 
 ### registry
 
 Use `registry` for pushing to a custom registry.
-> NOTE: GitHub's Docker registry uses a different path format to Docker Hub, as shown below. See [Configuring Docker for use with GitHub Package Registry](https://help.github.com/en/github/managing-packages-with-github-package-registry/configuring-docker-for-use-with-github-package-registry#publishing-a-package) for more information.
+> NOTE: GitHub's Docker registry uses a different path format to Docker Hub, as shown below.
+> See [Configuring Docker for use with GitHub Package Registry](https://help.github.com/en/github/managing-packages-with-github-package-registry/configuring-docker-for-use-with-github-package-registry#publishing-a-package)
+> for more information.
 
 ```yaml
 with:
@@ -99,7 +101,8 @@ with:
 
 ### buildargs
 
-Use `buildargs` when you want to pass a list of environment variables as [build-args](https://docs.docker.com/engine/reference/commandline/build/#set-build-time-variables---build-arg). Identifiers are separated by comma.
+Use `buildargs` when you want to pass a list of environment variables as [build-args](https://docs.docker.com/engine/reference/commandline/build/#set-build-time-variables---build-arg).
+Identifiers are separated by comma.
 All `buildargs` will be masked, so that they don't appear in the logs.
 
 ```yaml
@@ -118,7 +121,10 @@ All `buildargs` will be masked, so that they don't appear in the logs.
 ### cache
 
 Use `cache` when you have big images, that you would only like to build partially (changed layers).
-> CAUTION: Docker builds will cache non-repoducable commands, such as installing packages. If you use this option, your packages will never update. To avoid this, run this action on a schedule with caching **disabled** to rebuild the cache periodically.
+> CAUTION: Docker builds will cache non-repoducable commands, such as installing packages.
+> If you use this option, your packages will never update.
+> To avoid this, run this action on a schedule with caching **disabled**
+> to rebuild the cache periodically.
 
 ```yaml
 name: Publish to Registry

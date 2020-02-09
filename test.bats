@@ -39,19 +39,19 @@ teardown() {
 /usr/local/bin/docker logout"
 }
 
-@test "it converts dashes in branch to hyphens" {
-  export GITHUB_REF='refs/heads/myBranch/withDash'
+@test "it pushes a git tag" {
+  export GITHUB_REF='refs/tags/v1.0.0'
 
   run /entrypoint.sh
 
   expectStdOut "
 ::set-output name=tag::12169ed809255604e557a82617264e9c373faca7
-::set-output name=branch-tag::myBranch-withDash"
+::set-output name=branch-tag::v1.0.0"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:myBranch-withDash .
+/usr/local/bin/docker build -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:v1.0.0 .
 /usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
-/usr/local/bin/docker push my/repository:myBranch-withDash
+/usr/local/bin/docker push my/repository:v1.0.0
 /usr/local/bin/docker logout"
 }
 
