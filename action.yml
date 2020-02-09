@@ -29,6 +29,9 @@ inputs:
   cache:
     description: 'Use cache when you have big images, that you would only like to build partially'
     required: false
+  extratags:
+    description: 'Use extratags when you want to add additional tags to the docker image'
+    required: false
 outputs:
   tag:
     description: 'Is the tag, which was pushed and refers to the commit sha'

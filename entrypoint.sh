@@ -28,6 +28,7 @@ main() {
     changeWorkingDirectory
   fi
 
+  # shellcheck disable=SC2086
   echo "${INPUT_PASSWORD}" | docker login -u ${INPUT_USERNAME} --password-stdin ${INPUT_REGISTRY}
 
   BUILDPARAMS=""
@@ -38,6 +39,9 @@ main() {
   fi
   if uses "${INPUT_BUILDARGS}"; then
     addBuildArgs
+  fi
+  if uses "${INPUT_EXTRATAGS}"; then
+    addExtraTags
   fi
   if uses "${INPUT_CONTEXT}"; then
     CONTEXT="${INPUT_CONTEXT}"
@@ -79,6 +83,12 @@ addBuildArgs() {
   done
 }
 
+addExtraTags() {
+  for tag in $(echo "${INPUT_EXTRATAGS}" | tr ',' '\n'); do
+    BUILDPARAMS="$BUILDPARAMS -t ${tag}"
+  done
+}
+
 useBuildCache() {
   if docker pull "${DOCKERNAME_BRANCH}" 2>/dev/null; then
     BUILDPARAMS="$BUILDPARAMS --cache-from ${DOCKERNAME_BRANCH}"
@@ -94,9 +104,15 @@ usesBoolean() {
 }
 
 pushImage() {
+  # shellcheck disable=SC2086
   docker build $BUILDPARAMS -t "${DOCKERNAME_SHA}" -t "${DOCKERNAME_BRANCH}" "${CONTEXT}"
   docker push "${DOCKERNAME_SHA}"
   docker push "${DOCKERNAME_BRANCH}"
+  if uses "${INPUT_EXTRATAGS}"; then
+    for tag in $(echo "${INPUT_EXTRATAGS}" | tr ',' '\n'); do
+      docker push "${INPUT_NAME}:${tag}"
+    done
+  fi
 }
 
 main

@@ -169,6 +169,41 @@ teardown() {
 /usr/local/bin/docker logout"
 }
 
+@test "it uses extratags for building, if configured" {
+  export INPUT_EXTRATAGS='firsttag,secondtag'
+
+  run /entrypoint.sh
+
+  expectStdOut "
+::set-output name=tag::12169ed809255604e557a82617264e9c373faca7
+::set-output name=branch-tag::master"
+
+  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
+/usr/local/bin/docker build -t firsttag -t secondtag -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:master .
+/usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
+/usr/local/bin/docker push my/repository:master
+/usr/local/bin/docker push my/repository:firsttag
+/usr/local/bin/docker push my/repository:secondtag
+/usr/local/bin/docker logout"
+}
+
+@test "it uses extratags for a single variable" {
+  export INPUT_EXTRATAGS='lonelytag'
+
+  run /entrypoint.sh
+
+  expectStdOut "
+::set-output name=tag::12169ed809255604e557a82617264e9c373faca7
+::set-output name=branch-tag::master"
+
+  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
+/usr/local/bin/docker build -t lonelytag -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:master .
+/usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
+/usr/local/bin/docker push my/repository:master
+/usr/local/bin/docker push my/repository:lonelytag
+/usr/local/bin/docker logout"
+}
+
 @test "it errors when with.name was not set" {
   unset INPUT_NAME
 

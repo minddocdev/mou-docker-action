@@ -1,8 +1,6 @@
 # Docker publish action
 
-[![Actions Status](https://github.com/minddocdev/docker-publish-action/workflows/Test/badge.svg)](https://github.com/minddocdev/docker-publish-action/actions)
-[![Actions Status](https://github.com/minddocdev/docker-publish-action/workflows/Integration%20Test/badge.svg)](https://github.com/minddocdev/docker-publish-action/actions)
-[![Actions Status](https://github.com/minddocdev/docker-publish-action/workflows/Integration%20Test%20Github/badge.svg)](https://github.com/minddocdev/docker-publish-action/actions)
+[![Actions Status](https://github.com/minddocdev/docker-publish-action/workflows/test/badge.svg)](https://github.com/minddocdev/docker-publish-action/actions)
 
 This Action for [Docker](https://www.docker.com/) uses the Git branch as
 the [Docker tag](https://docs.docker.com/engine/reference/commandline/tag/)
@@ -107,7 +105,7 @@ All `buildargs` will be masked, so that they don't appear in the logs.
 
 ```yaml
 - name: Publish to Registry
-  uses: elgohr/Publish-Docker-Github-Action@master
+  uses: minddocdev/docker-publish-action@master
   env:
     MY_FIRST: variableContent
     MY_SECOND: variableContent
@@ -140,12 +138,28 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Publish to Registry
-      uses: elgohr/Publish-Docker-Github-Action@master
+      uses: minddocdev/docker-publish-action@master
       with:
         name: myDocker/repository
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         cache: ${{ github.event_name != 'schedule' }}
+```
+
+### extratags
+
+Use `extratags` when you want to pass a list of environment variables as docker tags,
+that will also be push into the registry.
+Identifiers are separated by comma.
+
+```yaml
+- name: Publish to Registry
+  uses: minddocdev/docker-publish-action@master
+  with:
+    name: myDocker/repository
+    username: ${{ secrets.DOCKER_USERNAME }}
+    password: ${{ secrets.DOCKER_PASSWORD }}
+    extratags: firsttag,secondtag
 ```
 
 ## Development
