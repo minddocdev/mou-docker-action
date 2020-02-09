@@ -3,7 +3,7 @@ author: 'MindDoc Health GmbH'
 branding:
   icon: 'anchor'
   color: 'blue'
-description: 'Uses the git branch as the docker tag and pushes the container'
+description: 'Uses the git branch or tag as the docker tag and pushes the built image'
 inputs:
   name:
     description: 'The name of the image you would like to push'
