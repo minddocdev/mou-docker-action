@@ -35,8 +35,8 @@ inputs:
 outputs:
   tag:
     description: 'Is the tag, which was pushed and refers to the commit sha'
-  branch-tag:
-    description: 'Is the tag that is generated from the branch name that is pushed'
+  ref-tag:
+    description: 'Is the tag that is generated from the detected ref that is pushed'
 runs:
   using: 'docker'
   image: 'Dockerfile'

@@ -20,7 +20,7 @@ main() {
     REF="${GITHUB_HEAD_REF}"
   fi
   # Remove refs/heads/<branch>, refs/tags/<branch>, etc...
-  REF=${BRANCH#refs/*/}
+  REF=${REF#refs/*/}
 
   DOCKERNAME_REF="${INPUT_NAME}:${REF}"
   DOCKERNAME_SHA="${INPUT_NAME}:${GITHUB_SHA}"

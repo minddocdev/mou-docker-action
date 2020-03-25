@@ -30,7 +30,7 @@ teardown() {
 
   expectStdOut "
 ::set-output name=tag::12169ed809255604e557a82617264e9c373faca7
-::set-output name=branch-tag::master"
+::set-output name=ref-tag::master"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
 /usr/local/bin/docker build -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:master .
@@ -46,7 +46,7 @@ teardown() {
 
   expectStdOut "
 ::set-output name=tag::12169ed809255604e557a82617264e9c373faca7
-::set-output name=branch-tag::v1.0.0"
+::set-output name=ref-tag::v1.0.0"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
 /usr/local/bin/docker build -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:v1.0.0 .
@@ -62,7 +62,7 @@ teardown() {
 
   expectStdOut "
 ::set-output name=tag::12169ed809255604e557a82617264e9c373faca7
-::set-output name=branch-tag::master"
+::set-output name=ref-tag::master"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
 /usr/local/bin/docker build -f MyDockerFileName -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:master .
@@ -143,7 +143,7 @@ teardown() {
 ::add-mask::MY_FIRST
 ::add-mask::MY_SECOND
 ::set-output name=tag::12169ed809255604e557a82617264e9c373faca7
-::set-output name=branch-tag::master"
+::set-output name=ref-tag::master"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
 /usr/local/bin/docker build --build-arg MY_FIRST --build-arg MY_SECOND -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:master .
@@ -160,7 +160,7 @@ teardown() {
   expectStdOut "
 ::add-mask::MY_ONLY
 ::set-output name=tag::12169ed809255604e557a82617264e9c373faca7
-::set-output name=branch-tag::master"
+::set-output name=ref-tag::master"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
 /usr/local/bin/docker build --build-arg MY_ONLY -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:master .
@@ -176,7 +176,7 @@ teardown() {
 
   expectStdOut "
 ::set-output name=tag::12169ed809255604e557a82617264e9c373faca7
-::set-output name=branch-tag::master"
+::set-output name=ref-tag::master"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
 /usr/local/bin/docker build -t firsttag -t secondtag -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:master .
@@ -194,7 +194,7 @@ teardown() {
 
   expectStdOut "
 ::set-output name=tag::12169ed809255604e557a82617264e9c373faca7
-::set-output name=branch-tag::master"
+::set-output name=ref-tag::master"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
 /usr/local/bin/docker build -t lonelytag -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:master .
@@ -278,7 +278,7 @@ function expectMockCalled() {
 
   expectStdOut "
 ::set-output name=tag::12169ed809255604e557a82617264e9c373faca7
-::set-output name=branch-tag::my-branch"
+::set-output name=ref-tag::my-branch"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
 /usr/local/bin/docker build -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:my-branch .
