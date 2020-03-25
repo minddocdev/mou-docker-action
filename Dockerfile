@@ -1,5 +1,5 @@
 FROM docker:19.03.2 as runtime
-LABEL repository="https://github.com/minddocdev/docker-publish-action"
+LABEL repository="https://github.com/minddocdev/mou-docker-action"
 LABEL maintainer="development@minddoc.com"
 
 RUN apk update \

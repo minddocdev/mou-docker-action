@@ -169,8 +169,8 @@ teardown() {
 /usr/local/bin/docker logout"
 }
 
-@test "it uses extratags for building, if configured" {
-  export INPUT_EXTRATAGS='firsttag,secondtag'
+@test "it uses tags for building, if configured" {
+  export INPUT_TAGS='firsttag,secondtag'
 
   run /entrypoint.sh
 
@@ -187,8 +187,8 @@ teardown() {
 /usr/local/bin/docker logout"
 }
 
-@test "it uses extratags for a single variable" {
-  export INPUT_EXTRATAGS='lonelytag'
+@test "it uses tags for a single variable" {
+  export INPUT_TAGS='lonelytag'
 
   run /entrypoint.sh
 

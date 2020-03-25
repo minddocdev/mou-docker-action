@@ -1,6 +1,6 @@
 # Docker publish action
 
-[![Actions Status](https://github.com/minddocdev/docker-publish-action/workflows/test/badge.svg)](https://github.com/minddocdev/docker-publish-action/actions)
+[![Actions Status](https://github.com/minddocdev/mou-docker-action/workflows/test/badge.svg)](https://github.com/minddocdev/mou-docker-action/actions)
 
 This Action for [Docker](https://www.docker.com/) uses the Git branch or tag as
 the [Docker tag](https://docs.docker.com/engine/reference/commandline/tag/)
@@ -22,7 +22,7 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Publish to Registry
-      uses: minddocdev/docker-publish-action@master
+      uses: minddocdev/mou-docker-action@master
       with:
         name: myDocker/repository
         username: ${{ secrets.DOCKER_USERNAME }}
@@ -102,7 +102,7 @@ All `buildargs` will be masked, so that they don't appear in the logs.
 
 ```yaml
 - name: Publish to Registry
-  uses: minddocdev/docker-publish-action@master
+  uses: minddocdev/mou-docker-action@master
   env:
     MY_FIRST: variableContent
     MY_SECOND: variableContent
@@ -135,7 +135,7 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Publish to Registry
-      uses: minddocdev/docker-publish-action@master
+      uses: minddocdev/mou-docker-action@master
       with:
         name: myDocker/repository
         username: ${{ secrets.DOCKER_USERNAME }}
@@ -143,20 +143,20 @@ jobs:
         cache: ${{ github.event_name != 'schedule' }}
 ```
 
-### extratags
+### tags
 
-Use `extratags` when you want to pass a list of environment variables as docker tags,
+Use `tags` when you want to pass a list of environment variables as docker tags,
 that will also be push into the registry.
 Identifiers are separated by comma.
 
 ```yaml
 - name: Publish to Registry
-  uses: minddocdev/docker-publish-action@master
+  uses: minddocdev/mou-docker-action@master
   with:
     name: myDocker/repository
     username: ${{ secrets.DOCKER_USERNAME }}
     password: ${{ secrets.DOCKER_PASSWORD }}
-    extratags: firsttag,secondtag
+    tags: firsttag,secondtag
 ```
 
 ## Development

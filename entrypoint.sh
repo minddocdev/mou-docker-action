@@ -14,14 +14,15 @@ main() {
   fi
 
   # Branch or tag
-  BRANCH="${GITHUB_REF}"
+  REF="${GITHUB_REF}"
+  # Pull request is always related to a branch that should be merged into the default one
   if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
-    BRANCH="${GITHUB_HEAD_REF}"
+    REF="${GITHUB_HEAD_REF}"
   fi
   # Remove refs/heads/<branch>, refs/tags/<branch>, etc...
-  BRANCH=${BRANCH#refs/*/}
+  REF=${BRANCH#refs/*/}
 
-  DOCKERNAME_BRANCH="${INPUT_NAME}:${BRANCH}"
+  DOCKERNAME_REF="${INPUT_NAME}:${REF}"
   DOCKERNAME_SHA="${INPUT_NAME}:${GITHUB_SHA}"
 
   if uses "${INPUT_WORKDIR}"; then
@@ -40,8 +41,8 @@ main() {
   if uses "${INPUT_BUILDARGS}"; then
     addBuildArgs
   fi
-  if uses "${INPUT_EXTRATAGS}"; then
-    addExtraTags
+  if uses "${INPUT_TAGS}"; then
+    addTags
   fi
   if uses "${INPUT_CONTEXT}"; then
     CONTEXT="${INPUT_CONTEXT}"
@@ -52,7 +53,7 @@ main() {
 
   pushImage
   echo ::set-output name=tag::"${GITHUB_SHA}"
-  echo ::set-output name=branch-tag::"${BRANCH}"
+  echo ::set-output name=ref-tag::"${REF}"
 
   docker logout
 }
@@ -83,15 +84,15 @@ addBuildArgs() {
   done
 }
 
-addExtraTags() {
-  for tag in $(echo "${INPUT_EXTRATAGS}" | tr ',' '\n'); do
+addTags() {
+  for tag in $(echo "${INPUT_TAGS}" | tr ',' '\n'); do
     BUILDPARAMS="$BUILDPARAMS -t ${tag}"
   done
 }
 
 useBuildCache() {
-  if docker pull "${DOCKERNAME_BRANCH}" 2>/dev/null; then
-    BUILDPARAMS="$BUILDPARAMS --cache-from ${DOCKERNAME_BRANCH}"
+  if docker pull "${DOCKERNAME_REF}" 2>/dev/null; then
+    BUILDPARAMS="$BUILDPARAMS --cache-from ${DOCKERNAME_REF}"
   fi
 }
 
@@ -105,11 +106,11 @@ usesBoolean() {
 
 pushImage() {
   # shellcheck disable=SC2086
-  docker build $BUILDPARAMS -t "${DOCKERNAME_SHA}" -t "${DOCKERNAME_BRANCH}" "${CONTEXT}"
+  docker build $BUILDPARAMS -t "${DOCKERNAME_SHA}" -t "${DOCKERNAME_REF}" "${CONTEXT}"
   docker push "${DOCKERNAME_SHA}"
-  docker push "${DOCKERNAME_BRANCH}"
-  if uses "${INPUT_EXTRATAGS}"; then
-    for tag in $(echo "${INPUT_EXTRATAGS}" | tr ',' '\n'); do
+  docker push "${DOCKERNAME_REF}"
+  if uses "${INPUT_TAGS}"; then
+    for tag in $(echo "${INPUT_TAGS}" | tr ',' '\n'); do
       docker push "${INPUT_NAME}:${tag}"
     done
   fi
