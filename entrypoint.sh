@@ -21,6 +21,8 @@ main() {
   fi
   # Remove refs/heads/<branch>, refs/tags/<branch>, etc...
   REF=${REF#refs/*/}
+  # Remove everything that is before the @ tag
+  REF=${REF#*@}
 
   DOCKERNAME_REF="${INPUT_NAME}:${REF}"
   DOCKERNAME_SHA="${INPUT_NAME}:${GITHUB_SHA}"
@@ -52,7 +54,7 @@ main() {
   fi
 
   pushImage
-  echo ::set-output name=tag::"${GITHUB_SHA}"
+  echo ::set-output name=sha-tag::"${GITHUB_SHA}"
   echo ::set-output name=ref-tag::"${REF}"
 
   docker logout

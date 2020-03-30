@@ -33,10 +33,10 @@ inputs:
     description: 'Use tags when you want to add additional tags to the docker image'
     required: false
 outputs:
-  tag:
+  sha-tag:
     description: 'Is the tag, which was pushed and refers to the commit sha'
   ref-tag:
-    description: 'Is the tag that is generated from the detected ref that is pushed'
+    description: 'Is the tag that is generated from the detected and sanitized ref that is pushed'
 runs:
   using: 'docker'
   image: 'Dockerfile'

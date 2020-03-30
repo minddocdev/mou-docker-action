@@ -29,7 +29,7 @@ teardown() {
   run /entrypoint.sh
 
   expectStdOut "
-::set-output name=tag::12169ed809255604e557a82617264e9c373faca7
+::set-output name=sha-tag::12169ed809255604e557a82617264e9c373faca7
 ::set-output name=ref-tag::master"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
@@ -45,7 +45,7 @@ teardown() {
   run /entrypoint.sh
 
   expectStdOut "
-::set-output name=tag::12169ed809255604e557a82617264e9c373faca7
+::set-output name=sha-tag::12169ed809255604e557a82617264e9c373faca7
 ::set-output name=ref-tag::v1.0.0"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
@@ -55,13 +55,29 @@ teardown() {
 /usr/local/bin/docker logout"
 }
 
+@test "it removes prefix for git tags with @" {
+  export GITHUB_REF='refs/tags/myapp@1.0.0'
+
+  run /entrypoint.sh
+
+  expectStdOut "
+::set-output name=sha-tag::12169ed809255604e557a82617264e9c373faca7
+::set-output name=ref-tag::1.0.0"
+
+  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
+/usr/local/bin/docker build -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:1.0.0 .
+/usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
+/usr/local/bin/docker push my/repository:1.0.0
+/usr/local/bin/docker logout"
+}
+
 @test "it pushes specific Dockerfile to branch" {
   export INPUT_DOCKERFILE='MyDockerFileName'
 
   run /entrypoint.sh  export GITHUB_REF='refs/heads/master'
 
   expectStdOut "
-::set-output name=tag::12169ed809255604e557a82617264e9c373faca7
+::set-output name=sha-tag::12169ed809255604e557a82617264e9c373faca7
 ::set-output name=ref-tag::master"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
@@ -142,7 +158,7 @@ teardown() {
   expectStdOut "
 ::add-mask::MY_FIRST
 ::add-mask::MY_SECOND
-::set-output name=tag::12169ed809255604e557a82617264e9c373faca7
+::set-output name=sha-tag::12169ed809255604e557a82617264e9c373faca7
 ::set-output name=ref-tag::master"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
@@ -159,7 +175,7 @@ teardown() {
 
   expectStdOut "
 ::add-mask::MY_ONLY
-::set-output name=tag::12169ed809255604e557a82617264e9c373faca7
+::set-output name=sha-tag::12169ed809255604e557a82617264e9c373faca7
 ::set-output name=ref-tag::master"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
@@ -175,7 +191,7 @@ teardown() {
   run /entrypoint.sh
 
   expectStdOut "
-::set-output name=tag::12169ed809255604e557a82617264e9c373faca7
+::set-output name=sha-tag::12169ed809255604e557a82617264e9c373faca7
 ::set-output name=ref-tag::master"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
@@ -193,7 +209,7 @@ teardown() {
   run /entrypoint.sh
 
   expectStdOut "
-::set-output name=tag::12169ed809255604e557a82617264e9c373faca7
+::set-output name=sha-tag::12169ed809255604e557a82617264e9c373faca7
 ::set-output name=ref-tag::master"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
@@ -277,7 +293,7 @@ function expectMockCalled() {
   run /entrypoint.sh
 
   expectStdOut "
-::set-output name=tag::12169ed809255604e557a82617264e9c373faca7
+::set-output name=sha-tag::12169ed809255604e557a82617264e9c373faca7
 ::set-output name=ref-tag::my-branch"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin

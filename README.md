@@ -37,8 +37,8 @@ jobs:
 
 ## Outputs
 
-`tag` is the git commit sha, which was pushed
-`ref-tag` is the detected git branch or tag, which was pushed
+`sha-tag` is the git commit sha, which was pushed
+`ref-tag` is the detected sanitized git branch or tag, which was pushed
 
 ## Optional Arguments
 
