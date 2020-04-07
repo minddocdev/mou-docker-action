@@ -88,7 +88,7 @@ addBuildArgs() {
 
 addTags() {
   for tag in $(echo "${INPUT_TAGS}" | tr ',' '\n'); do
-    BUILDPARAMS="$BUILDPARAMS -t ${tag}"
+    BUILDPARAMS="$BUILDPARAMS -t ${INPUT_NAME}:${tag}"
   done
 }
 

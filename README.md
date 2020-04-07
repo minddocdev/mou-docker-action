@@ -1,4 +1,4 @@
-# Docker publish action
+# MOU docker action
 
 [![Actions Status](https://github.com/minddocdev/mou-docker-action/workflows/test/badge.svg)](https://github.com/minddocdev/mou-docker-action/actions)
 

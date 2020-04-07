@@ -195,7 +195,7 @@ teardown() {
 ::set-output name=ref-tag::master"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -t firsttag -t secondtag -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:master .
+/usr/local/bin/docker build -t my/repository:firsttag -t my/repository:secondtag -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:master .
 /usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
 /usr/local/bin/docker push my/repository:master
 /usr/local/bin/docker push my/repository:firsttag
@@ -213,7 +213,7 @@ teardown() {
 ::set-output name=ref-tag::master"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -t lonelytag -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:master .
+/usr/local/bin/docker build -t my/repository:lonelytag -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:master .
 /usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
 /usr/local/bin/docker push my/repository:master
 /usr/local/bin/docker push my/repository:lonelytag
