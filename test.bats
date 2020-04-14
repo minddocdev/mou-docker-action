@@ -39,6 +39,38 @@ teardown() {
 /usr/local/bin/docker logout"
 }
 
+@test "it pushes a release branch" {
+  export GITHUB_REF='refs/heads/release/1.3.3'
+
+  run /entrypoint.sh
+
+  expectStdOut "
+::set-output name=sha-tag::12169ed809255604e557a82617264e9c373faca7
+::set-output name=ref-tag::1.3.3"
+
+  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
+/usr/local/bin/docker build -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:1.3.3 .
+/usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
+/usr/local/bin/docker push my/repository:1.3.3
+/usr/local/bin/docker logout"
+}
+
+@test "it pushes a feature branch with context" {
+  export GITHUB_REF='refs/heads/feat/myapp/JIRA-123/add-auth'
+
+  run /entrypoint.sh
+
+  expectStdOut "
+::set-output name=sha-tag::12169ed809255604e557a82617264e9c373faca7
+::set-output name=ref-tag::add-auth"
+
+  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
+/usr/local/bin/docker build -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:add-auth .
+/usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
+/usr/local/bin/docker push my/repository:add-auth
+/usr/local/bin/docker logout"
+}
+
 @test "it pushes a git tag" {
   export GITHUB_REF='refs/tags/v1.0.0'
 

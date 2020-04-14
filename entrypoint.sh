@@ -23,6 +23,8 @@ main() {
   REF=${REF#refs/*/}
   # Remove everything that is before the @ tag
   REF=${REF#*@}
+  # Remove everything that is before the last /
+  REF=${REF##*/}
 
   DOCKERNAME_REF="${INPUT_NAME}:${REF}"
   DOCKERNAME_SHA="${INPUT_NAME}:${GITHUB_SHA}"
