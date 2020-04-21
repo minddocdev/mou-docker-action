@@ -78,12 +78,12 @@ teardown() {
 
   expectStdOut "
 ::set-output name=sha-tag::12169ed809255604e557a82617264e9c373faca7
-::set-output name=ref-tag::v1.0.0"
+::set-output name=ref-tag::1.0.0"
 
   expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
-/usr/local/bin/docker build -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:v1.0.0 .
+/usr/local/bin/docker build -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:1.0.0 .
 /usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
-/usr/local/bin/docker push my/repository:v1.0.0
+/usr/local/bin/docker push my/repository:1.0.0
 /usr/local/bin/docker logout"
 }
 

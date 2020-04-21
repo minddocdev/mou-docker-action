@@ -21,8 +21,8 @@ main() {
   fi
   # Remove refs/heads/<branch>, refs/tags/<branch>, etc...
   REF=${REF#refs/*/}
-  # Remove everything that is before the @ tag
-  REF=${REF#*@}
+  # Remove everything that is before the @ or v tag
+  REF=${REF#*[@v]}
   # Remove everything that is before the last /
   REF=${REF##*/}
 
