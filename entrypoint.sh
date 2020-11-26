@@ -19,10 +19,15 @@ main() {
   if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
     REF="${GITHUB_HEAD_REF}"
   fi
-  # Detect if it is a tag
+  # Detect if it is an @ tag
   if [ -z "${REF##*refs/tags*}" ]; then
-    # Remove everything that is before the @ or v tag
-    REF=${REF#*[@v]}
+    # Remove everything that is before the @ tag
+    REF=${REF#*[@]}
+  fi
+  # Detect if it is a version tag
+  if [ -z "${REF##*refs/tags/v*}" ]; then
+    # Remove everything that is before the v tag
+    REF=${REF#*[v]}
   fi
 
   # Remove everything that is before the last /
