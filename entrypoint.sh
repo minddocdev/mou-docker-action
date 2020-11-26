@@ -24,7 +24,12 @@ main() {
     # Remove everything that is before the @ tag
     REF=${REF#*[@]}
   fi
-  # Detect if it is a version tag
+  # Detect if it is an @v tag
+  if [ -z "${REF##v*}" ]; then
+    # Remove everything that is before the @v tag
+    REF=${REF#*[v]}
+  fi
+  # Detect if it is a slash version tag
   if [ -z "${REF##*refs/tags/v*}" ]; then
     # Remove everything that is before the v tag
     REF=${REF#*[v]}
