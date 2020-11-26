@@ -22,17 +22,17 @@ main() {
   # Detect if it is an @ tag
   if [ -z "${REF##*refs/tags*}" ]; then
     # Remove everything that is before the @ tag
-    REF=${REF#*[@]}
+    REF=${REF##*@}
   fi
   # Detect if it is an @v tag
   if [ -z "${REF##v*}" ]; then
     # Remove everything that is before the @v tag
-    REF=${REF#*[v]}
+    REF=${REF##*v}
   fi
   # Detect if it is a slash version tag
   if [ -z "${REF##*refs/tags/v*}" ]; then
     # Remove everything that is before the v tag
-    REF=${REF#*[v]}
+    REF=${REF##*v}
   fi
 
   # Remove everything that is before the last /
