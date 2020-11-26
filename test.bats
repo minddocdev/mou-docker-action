@@ -119,6 +119,38 @@ teardown() {
 /usr/local/bin/docker logout"
 }
 
+@test "it removes prefix for git tags with @v" {
+  export GITHUB_REF='refs/tags/versionedapp@v1.0.0'
+
+  run /entrypoint.sh
+
+  expectStdOut "
+::set-output name=sha-tag::12169ed809255604e557a82617264e9c373faca7
+::set-output name=ref-tag::1.0.0"
+
+  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
+/usr/local/bin/docker build -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:1.0.0 .
+/usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
+/usr/local/bin/docker push my/repository:1.0.0
+/usr/local/bin/docker logout"
+}
+
+@test "it removes prefix for git tags with slash v" {
+  export GITHUB_REF='refs/tags/v1.0.0'
+
+  run /entrypoint.sh
+
+  expectStdOut "
+::set-output name=sha-tag::12169ed809255604e557a82617264e9c373faca7
+::set-output name=ref-tag::1.0.0"
+
+  expectMockCalled "/usr/local/bin/docker login -u USERNAME --password-stdin
+/usr/local/bin/docker build -t my/repository:12169ed809255604e557a82617264e9c373faca7 -t my/repository:1.0.0 .
+/usr/local/bin/docker push my/repository:12169ed809255604e557a82617264e9c373faca7
+/usr/local/bin/docker push my/repository:1.0.0
+/usr/local/bin/docker logout"
+}
+
 @test "it pushes specific Dockerfile to branch" {
   export INPUT_DOCKERFILE='MyDockerFileName'
 
