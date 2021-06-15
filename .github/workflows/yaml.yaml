@@ -19,6 +19,6 @@ jobs:
     container: giantswarm/yamllint:latest
     steps:
       - name: Checkout git repository
-        uses: actions/checkout@v1.2.0
+        uses: actions/checkout@v2.3.4
       - name: Lint yaml files
         run: yamllint -c .yamllint.yaml .
