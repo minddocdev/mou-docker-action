@@ -17,7 +17,7 @@ jobs:
     container: koalaman/shellcheck-alpine:latest
     steps:
     - name: Checkout git repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Check shell scripts
       run: '
         find . -type f \( -name "*.sh" \) -print |
