@@ -68,8 +68,8 @@ main() {
   fi
 
   pushImage
-  echo ::set-output name=sha-tag::"${GITHUB_SHA}"
-  echo ::set-output name=ref-tag::"${REF}"
+  echo sha-tag="${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+  echo ref-tag="${REF}" >> "$GITHUB_OUTPUT"
 
   docker logout
 }
