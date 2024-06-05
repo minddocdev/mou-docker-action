@@ -1,4 +1,4 @@
-FROM docker:24.0.6 as runtime
+FROM docker:26.1.4 as runtime
 LABEL repository="https://github.com/minddocdev/mou-docker-action"
 LABEL maintainer="development@minddoc.com"
 
